@@ -143,6 +143,63 @@ program
     console.log(chalk.green(`✓ 태그 "${tagName}" → ${snapshotId.slice(0, 8)}`));
   });
 
+// ── synapse ───────────────────────────────────────
+const synapse = program
+  .command('synapse')
+  .description('멀티에이전트 Synapse 세션');
+
+synapse
+  .command('run <goal>')
+  .description('Goal 기반 멀티에이전트 세션 실행')
+  .option('-p, --preset <name>', '프리셋 사용 (default, thorough, design, research, prompt)')
+  .option('-r, --roles <roles...>', '역할 직접 지정 (drafter, reviewer, refiner, concluder, architect, critic, researcher, promptEngineer)')
+  .option('--max-rounds <n>', '최대 라운드 수', '5')
+  .option('--provider <type>', 'AI provider (claude-code, claude-api, mock)', 'claude-code')
+  .option('--model <model>', 'AI 모델 (claude-api 사용 시)')
+  .option('--save-log <path>', '세션 로그를 파일로 저장')
+  .option('--quiet', '진행 출력 없이 결과만 표시')
+  .action(async (goal, opts) => {
+    const { Orchestrator } = await import('./synapse/index.js');
+    const config = Orchestrator.configure(goal, {
+      preset: opts.preset,
+      roles: opts.roles,
+      maxRounds: parseInt(opts.maxRounds),
+      provider: { type: opts.provider, model: opts.model },
+    });
+    const orchestrator = new Orchestrator(config);
+    const result = await orchestrator.run(!opts.quiet);
+
+    if (opts.saveLog) {
+      await orchestrator.saveLog(opts.saveLog);
+      console.log(chalk.green(`\n✓ 로그 저장: ${opts.saveLog}`));
+    }
+  });
+
+synapse
+  .command('roles')
+  .description('사용 가능한 역할 목록')
+  .action(async () => {
+    const { listBuiltinRoles } = await import('./synapse/index.js');
+    console.log(chalk.bold('\n사용 가능한 역할:'));
+    for (const role of listBuiltinRoles()) {
+      console.log(`  ${chalk.cyan(role.name.padEnd(18))} ${role.description}`);
+    }
+    console.log('');
+  });
+
+synapse
+  .command('presets')
+  .description('사용 가능한 프리셋 목록')
+  .action(async () => {
+    const { listPresets } = await import('./synapse/index.js');
+    console.log(chalk.bold('\n사용 가능한 프리셋:'));
+    for (const preset of listPresets()) {
+      console.log(`  ${chalk.cyan(preset.name.padEnd(12))} ${preset.description}`);
+      console.log(chalk.dim(`${''.padEnd(14)}역할: ${preset.roles.join(' → ')}`));
+    }
+    console.log('');
+  });
+
 // ── dashboard ─────────────────────────────────────
 program
   .command('dashboard')
