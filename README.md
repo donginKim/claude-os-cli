@@ -39,6 +39,37 @@ Drafter  Reviewer  Concluder
     Synapse Bus (메시지 교환)
 ```
 
+### 대화 히스토리 & 분석
+
+Claude Code 대화 기록을 조회하고, 반복 패턴을 분석해 스킬로 등록 제안
+
+```bash
+claude-os history                    # 세션 목록
+claude-os history <session-id>       # 대화 내용 보기
+claude-os analyze                    # 패턴 분석 및 스킬 제안
+claude-os export <session-id> -o out.md  # Markdown/HTML 내보내기
+```
+
+### 컨텍스트 관리 도구
+
+| 명령어 | 설명 |
+|---|---|
+| `claude-os doctor` | 컨텍스트 건강 진단 (CLAUDE.md, 메모리, Hook, MCP 점검) |
+| `claude-os memory list` | 메모리 조회/삭제/정리 제안 |
+| `claude-os preset apply <name>` | 프로젝트 유형별 원클릭 세팅 |
+| `claude-os hooks add <template>` | Hook 템플릿 관리 |
+| `claude-os sync export -o bundle.json` | 프로젝트 간 컨텍스트 이식 |
+
+#### 프리셋
+
+| 프리셋 | 설명 |
+|---|---|
+| `fullstack-react` | React + Node.js 풀스택 |
+| `api-server` | REST/GraphQL API 서버 |
+| `cli-tool` | CLI 도구 |
+| `monorepo` | 모노레포 (turborepo/nx/lerna) |
+| `data-pipeline` | 데이터 파이프라인 / ETL |
+
 ### TUI 대시보드
 
 `claude-os dashboard`로 터미널에서 직관적으로 관리 가능
@@ -162,7 +193,15 @@ claude-os/
 │   │   ├── types.ts           # 스냅샷 스키마
 │   │   ├── store.ts           # 저장소 엔진
 │   │   ├── collector.ts       # 컨텍스트 수집기
-│   │   └── restorer.ts        # 컨텍스트 복원기
+│   │   ├── restorer.ts        # 컨텍스트 복원기
+│   │   ├── history.ts         # 대화 히스토리 파서
+│   │   ├── analyzer.ts        # 히스토리 분석 & 스킬 제안
+│   │   ├── doctor.ts          # 컨텍스트 건강 진단
+│   │   ├── memory-manager.ts  # 메모리 관리
+│   │   ├── exporter.ts        # 세션 내보내기
+│   │   ├── preset.ts          # 프로젝트 프리셋
+│   │   ├── hooks-manager.ts   # Hook 템플릿 관리
+│   │   └── sync.ts            # 컨텍스트 동기화
 │   ├── harness/
 │   │   └── generator.ts       # CLAUDE.md 자동 생성
 │   ├── synapse/
@@ -178,6 +217,10 @@ claude-os/
 ├── package.json
 └── tsconfig.json
 ```
+
+## Contributors
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 
 ## 라이선스
 
