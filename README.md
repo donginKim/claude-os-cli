@@ -218,10 +218,6 @@ claude-os/
 └── tsconfig.json
 ```
 
-## Contributors
-
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
-
 ## 라이선스
 
 MIT
